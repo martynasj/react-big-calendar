@@ -1,9 +1,9 @@
 {
-  "name": "react-big-calendar",
+  "name": "react-work-calendar",
   "version": "0.11.1",
-  "description": "Calendar! with events",
-  "author": "Jason Quense <monastic.panic@gmail.com>",
-  "repository": "intljusticemission/react-big-calendar",
+  "description": "react-big-calendar fork",
+  "author": "Martynas Jankauskas <lyrinisobjektas@gmail.com>",
+  "repository": "martynasj/react-big-calendar",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "lib/css/react-big-calendar.css",

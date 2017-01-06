@@ -1,3 +1,8 @@
+react-work-calendar
+===================
+
+This is a forked project of original [react-big-calendar](https://www.npmjs.com/package/react-big-calendar)
+
 react-big-calendar
 ========================
 
