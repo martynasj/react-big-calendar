@@ -2,6 +2,7 @@ import React from 'react';
 import { findDOMNode } from 'react-dom';
 import cn from 'classnames';
 import closest from 'dom-helpers/query/closest';
+import _ from 'lodash';
 
 import { segStyle } from './utils/eventLevels';
 import { notify } from './utils/helpers';
@@ -20,7 +21,9 @@ class BackgroundCells extends React.Component {
     type: React.PropTypes.string,
     values: React.PropTypes.arrayOf(
       React.PropTypes.instanceOf(Date)
-    )
+    ),
+    // fully blocked days:   ex. [1,4,5]
+    blockedSlots: React.PropTypes.array.isRequired,
   }
 
   state = { selecting: false }
@@ -42,7 +45,7 @@ class BackgroundCells extends React.Component {
   }
 
   render(){
-    let { slots, values, cellWrapperComponent: Wrapper } = this.props;
+    let { slots, values, cellWrapperComponent: Wrapper, blockedSlots } = this.props;
     let { selecting, startIdx, endIdx } = this.state;
 
     let children = [];
@@ -53,7 +56,8 @@ class BackgroundCells extends React.Component {
           <div
             style={segStyle(1, slots)}
             className={cn('rbc-day-bg', {
-              'rbc-selected-cell': selecting && i >= startIdx && i <= endIdx
+              'rbc-selected-cell': selecting && i >= startIdx && i <= endIdx,
+              'blocked': _.includes(blockedSlots, values[i].getDay()),
             })}
           />
         </Wrapper>
@@ -146,5 +150,9 @@ class BackgroundCells extends React.Component {
       })
   }
 }
+
+BackgroundCells.defaultProps = {
+  blockedSlots: []
+};
 
 export default BackgroundCells;

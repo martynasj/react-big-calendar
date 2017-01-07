@@ -141,7 +141,6 @@ export default class TimeGrid extends Component {
     let { min, max, endAccessor, startAccessor, components, enabledHours } = this.props;
 
     return range.map((date, idx) => {
-      console.log({ date, idx });
       let daysEvents = events.filter(
         event => dates.inRange(date,
           get(event, startAccessor),
@@ -180,6 +179,13 @@ export default class TimeGrid extends Component {
    * instead of showing intervals of enabled hours, we get blocked hours
    */
   calculateBlockedHours = enabledHours => {
+    if (!enabledHours || enabledHours.length === 0) {
+      return [{
+        start: 0,
+        end: 1440,
+      }];
+    }
+
     return _.map(enabledHours, (shift, index, allShifts) => ({
       start: index === 0 ? 0 : allShifts[index - 1].end,
       end: shift.start,

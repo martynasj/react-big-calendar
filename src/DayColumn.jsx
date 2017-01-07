@@ -140,8 +140,9 @@ let DayColumn = React.createClass({
   renderBlockedHours() {
     const { blockedHours } = this.props;
 
-    return blockedHours.map(block =>
+    return blockedHours.map((block, index) =>
       <div
+        key={index}
         style={this._blockedSlotStyle(block.start, block.end)}
         className={'rbc-blocked-hours'}
       />
@@ -217,7 +218,6 @@ let DayColumn = React.createClass({
   },
 
   _slotStyle(startSlot, endSlot, leftOffset){
-    console.log({ startSlot, endSlot, leftOffset });
     endSlot = Math.max(endSlot, startSlot + this.props.step) //must be at least one `step` high
 
     let eventOffset = this.props.eventOffset || 10

@@ -4,6 +4,7 @@ import cn from 'classnames';
 import dates from './utils/dates';
 import localizer from './localizer'
 import chunk from 'lodash/chunk';
+import _ from 'lodash';
 
 import { navigate } from './utils/constants';
 import { notify } from './utils/helpers';
@@ -32,6 +33,8 @@ let propTypes = {
   ...EventRow.PropTypes,
 
   culture: React.PropTypes.string,
+
+  enabledHours: React.PropTypes.object,
 
   date: React.PropTypes.instanceOf(Date),
 
@@ -172,7 +175,7 @@ let MonthView = React.createClass({
   },
 
   renderBackground(row, idx){
-    const { selectable, components } = this.props;
+    const { selectable, components, enabledHours } = this.props;
 
     let onSelectSlot = ({ start, end }) => {
       this._pendingSelection = this._pendingSelection
@@ -182,6 +185,13 @@ let MonthView = React.createClass({
       this._selectTimer = setTimeout(()=> this._selectDates())
     }
 
+    const mapper = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']; // native js Date() getDay() mapper
+    const blockedDays = _.reduce(mapper, (reduction, day, index) => {
+      // we don't do with overwrites yet
+      if (!enabledHours[day] || enabledHours[day].length === 0) return [ ...reduction, index ];
+      return reduction;
+    }, []);
+
     return (
     <BackgroundCells
       slots={7}
@@ -189,6 +199,7 @@ let MonthView = React.createClass({
       rtl={this.props.rtl}
       selectable={selectable}
       onSelectSlot={onSelectSlot}
+      blockedSlots={blockedDays}
       ref={r => this._bgRows[idx] = r}
       container={() => findDOMNode(this)}
       cellWrapperComponent={components.dateCellWrapper}
