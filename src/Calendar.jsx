@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import uncontrollable from 'uncontrollable';
 import cn from 'classnames';
 import {
     accessor
@@ -544,4 +545,8 @@ let Calendar = React.createClass({
   }
 });
 
-export default Calendar;
+export default uncontrollable(Calendar, {
+  view: 'onView',
+  date: 'onNavigate',
+  selected: 'onSelectEvent'
+})
