@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import cn from 'classnames';
+import _ from 'lodash';
 import { findDOMNode } from 'react-dom';
 import dates from './utils/dates';
 import localizer from './localizer'
@@ -28,33 +29,6 @@ const MIN_ROWS = 2;
 
 
 export default class TimeGrid extends Component {
-
-  static propTypes = {
-    ...DayColumn.propTypes,
-    ...TimeColumn.propTypes,
-
-    step: React.PropTypes.number,
-    min: React.PropTypes.instanceOf(Date),
-    max: React.PropTypes.instanceOf(Date),
-    scrollToTime: React.PropTypes.instanceOf(Date),
-    dayFormat: dateFormat,
-    rtl: React.PropTypes.bool
-  }
-
-  static defaultProps = {
-    ...DayColumn.defaultProps,
-    ...TimeColumn.defaultProps,
-
-    step: 30,
-    min: dates.startOf(new Date(), 'day'),
-    max: dates.endOf(new Date(), 'day'),
-    scrollToTime: dates.startOf(new Date(), 'day'),
-    /* these 2 are needed to satisfy requirements from TimeColumn required props
-     * There is a strange bug in React, using ...TimeColumn.defaultProps causes weird crashes
-     */
-    type: 'gutter',
-    now: new Date()
-  }
 
   constructor(props) {
     super(props)
@@ -164,20 +138,30 @@ export default class TimeGrid extends Component {
   }
 
   renderEvents(range, events, today){
-    let { min, max, endAccessor, startAccessor, components } = this.props;
+    let { min, max, endAccessor, startAccessor, components, enabledHours } = this.props;
 
     return range.map((date, idx) => {
+      console.log({ date, idx });
       let daysEvents = events.filter(
         event => dates.inRange(date,
           get(event, startAccessor),
           get(event, endAccessor), 'day')
       )
 
+      let daysBlockedHours = [];
+      if (enabledHours) {
+        // this is needed to map Calendar enabledHours props
+        const mapper = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        const daysEnabledHours = enabledHours[mapper[date.getDay()]];
+        daysBlockedHours = this.calculateBlockedHours(daysEnabledHours);
+      }
+
       return (
         <DayColumn
           {...this.props }
           min={dates.merge(date, min)}
           max={dates.merge(date, max)}
+          blockedHours={daysBlockedHours}
           eventComponent={components.event}
           eventWrapperComponent={components.eventWrapper}
           dayWrapperComponent={components.dayWrapper}
@@ -190,6 +174,17 @@ export default class TimeGrid extends Component {
       )
     })
   }
+
+  /**
+   * Reverses the enabledHours array, by making a new array of the same shape, just
+   * instead of showing intervals of enabled hours, we get blocked hours
+   */
+  calculateBlockedHours = enabledHours => {
+    return _.map(enabledHours, (shift, index, allShifts) => ({
+      start: index === 0 ? 0 : allShifts[index - 1].end,
+      end: shift.start,
+    })).concat({ start: _.last(enabledHours).end, end: 1440 });
+  };
 
   renderAllDayEvents(range, levels){
     let { first, last } = endOfRange(range);
@@ -387,3 +382,31 @@ export default class TimeGrid extends Component {
   }
 
 }
+
+TimeGrid.propTypes = {
+  ...DayColumn.propTypes,
+  ...TimeColumn.propTypes,
+
+  enabledHours: React.PropTypes.object,
+  step: React.PropTypes.number,
+  min: React.PropTypes.instanceOf(Date),
+  max: React.PropTypes.instanceOf(Date),
+  scrollToTime: React.PropTypes.instanceOf(Date),
+  dayFormat: dateFormat,
+  rtl: React.PropTypes.bool
+};
+
+TimeGrid.defaultProps = {
+  ...DayColumn.defaultProps,
+  ...TimeColumn.defaultProps,
+
+  step: 30,
+  min: dates.startOf(new Date(), 'day'),
+  max: dates.endOf(new Date(), 'day'),
+  scrollToTime: dates.startOf(new Date(), 'day'),
+  /* these 2 are needed to satisfy requirements from TimeColumn required props
+   * There is a strange bug in React, using ...TimeColumn.defaultProps causes weird crashes
+   */
+  type: 'gutter',
+  now: new Date()
+};

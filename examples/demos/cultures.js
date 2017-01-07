@@ -1,6 +1,7 @@
 import React from 'react';
 import BigCalendar from 'react-big-calendar';
 import events from '../events';
+import enabledHours from '../enabledHours';
 
 require('globalize/lib/cultures/globalize.culture.en-GB');
 require('globalize/lib/cultures/globalize.culture.es');
@@ -38,6 +39,7 @@ let Cultures = React.createClass({
         <BigCalendar
           rtl={rtl}
           events={events}
+          enabledHours={enabledHours}
           culture={this.state.culture}
           defaultDate={new Date(2015, 3, 1)}
         />

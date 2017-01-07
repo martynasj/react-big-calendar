@@ -40,13 +40,19 @@ function overlaps(event, events, { startAccessor, endAccessor }, last) {
   return offset
 }
 
-let DaySlot = React.createClass({
+let DayColumn = React.createClass({
 
   propTypes: {
     events: React.PropTypes.array.isRequired,
     step: React.PropTypes.number.isRequired,
     min: React.PropTypes.instanceOf(Date).isRequired,
     max: React.PropTypes.instanceOf(Date).isRequired,
+
+    /**
+     * Blocked hours for this day
+     * [{ start: 0, end: 900 }, { start: 1080, end: 1440 }]
+     */
+    blockedHours: React.PropTypes.array,
 
     allDayAccessor: accessor.isRequired,
     startAccessor: accessor.isRequired,
@@ -118,6 +124,7 @@ let DaySlot = React.createClass({
         step={step}
       >
         {this.renderEvents()}
+        {this.renderBlockedHours()}
 
         {selecting &&
           <div className='rbc-slot-selection' style={style}>
@@ -127,6 +134,17 @@ let DaySlot = React.createClass({
           </div>
         }
       </TimeColumn>
+    );
+  },
+
+  renderBlockedHours() {
+    const { blockedHours } = this.props;
+
+    return blockedHours.map(block =>
+      <div
+        style={this._blockedSlotStyle(block.start, block.end)}
+        className={'rbc-blocked-hours'}
+      />
     );
   },
 
@@ -184,8 +202,22 @@ let DaySlot = React.createClass({
     })
   },
 
-  _slotStyle(startSlot, endSlot, leftOffset){
+  /**
+   * @param start   - minutes from 00:00, ex. 420
+   * @param end     - minutes from 00:00, ex 960
+   */
+  _blockedSlotStyle(start, end) {
+    let top = ((start / this._totalMin) * 100);
+    let bottom = ((end / this._totalMin) * 100);
 
+    return {
+      top: top + '%',
+      height: bottom - top + '%',
+    };
+  },
+
+  _slotStyle(startSlot, endSlot, leftOffset){
+    console.log({ startSlot, endSlot, leftOffset });
     endSlot = Math.max(endSlot, startSlot + this.props.step) //must be at least one `step` high
 
     let eventOffset = this.props.eventOffset || 10
@@ -325,4 +357,4 @@ function minToDate(min, date){
   return dates.milliseconds(dt, 0)
 }
 
-export default DaySlot;
+export default DayColumn;

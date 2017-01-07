@@ -62,6 +62,11 @@ let Calendar = React.createClass({
      */
     elementProps: PropTypes.object,
 
+    enabledHours: PropTypes.shape({
+      common: PropTypes.array,
+      // todo: computed date keys
+    }),
+
     /**
      * The current date value of the calendar. Determines the visible view range
      *
@@ -445,6 +450,7 @@ let Calendar = React.createClass({
       , className
       , elementProps
       , date: current
+      , enabledHours
       , ...props } = this.props;
 
     formats = defaultFormats(formats)
@@ -487,6 +493,7 @@ let Calendar = React.createClass({
           ref='view'
           {...props}
           {...formats}
+          enabledHours={enabledHours}
           culture={culture}
           formats={undefined}
           events={events}
