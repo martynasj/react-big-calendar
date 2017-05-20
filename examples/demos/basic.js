@@ -1,6 +1,8 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import BigCalendar from 'react-big-calendar';
 import events from '../events';
+
+let allViews = Object.keys(BigCalendar.views).map(k => BigCalendar.views[k])
 
 let Basic = React.createClass({
   render(){
@@ -8,6 +10,7 @@ let Basic = React.createClass({
       <BigCalendar
         {...this.props}
         events={events}
+        views={allViews}
         defaultDate={new Date(2015, 3, 1)}
       />
     )

@@ -32,8 +32,6 @@
   position: relative;
 
   .rbc-event {
-    position: absolute;
-    z-index: 3;
     border: 1px solid @event-border;
     display: flex;
     max-height: 100%;
@@ -79,6 +77,11 @@
 
 .rbc-day-header {
   text-align: center;
+}
+
+.rbc-day-slot .rbc-event {
+  position: absolute;
+  z-index: 3;
 }
 
 .rbc-day-slot.rbc-today {

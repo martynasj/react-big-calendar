@@ -4,12 +4,12 @@ import Intro from './Intro.md';
 import cn from 'classnames';
 import { render } from 'react-dom';
 
-import localizer from 'react-big-calendar/localizers/globalize';
+import localizer from 'react-big-calendar/lib/localizers/globalize';
 import globalize from 'globalize';
 
 localizer(globalize);
 
-import 'react-big-calendar/less/styles.less';
+import 'react-big-calendar/lib/less/styles.less';
 import './styles.less';
 import './prism.less';
 
@@ -18,22 +18,22 @@ let demoRoot = 'https://github.com/intljusticemission/react-big-calendar/tree/ma
 const Example = React.createClass({
   getInitialState(){
     return {
-      selected: 'enabledHours'
+      selected: 'basic',
     };
   },
 
   render() {
     let selected = this.state.selected;
     let Current = {
-      basic: require('./demos/basic'),
-      selectable: require('./demos/selectable'),
-      cultures: require('./demos/cultures'),
-      popup: require('./demos/popup'),
-      rendering: require('./demos/rendering'),
-      customView: require('./demos/customView'),
-      timeslots: require('./demos/timeslots'),
-      dnd: require('./demos/dnd'),
-      enabledHours: require('./demos/enabledHours')
+      basic: require('./demos/basic').default,
+      selectable: require('./demos/selectable').default,
+      cultures: require('./demos/cultures').default,
+      popup: require('./demos/popup').default,
+      rendering: require('./demos/rendering').default,
+      customView: require('./demos/customView').default,
+      timeslots: require('./demos/timeslots').default,
+      dnd: require('./demos/dnd').default,
+      enabledHours: require('./demos/enabledHours').default,
     }[selected];
 
     return (
@@ -57,8 +57,8 @@ const Example = React.createClass({
           </p>
         </div>
       </div>
-        <div className='examples contain'>
-          <aside>
+        <div className='examples'>
+          <header className="contain">
             <ul className='nav nav-pills'>
               <li className={cn({active: selected === 'basic' })}>
                 <a href='#' onClick={this.select.bind(null, 'basic')}>Basic</a>
@@ -90,7 +90,7 @@ const Example = React.createClass({
                 <a href='#' onClick={this.select.bind(null, 'enabledHours')}>Enabled hours</a>
               </li>
             </ul>
-          </aside>
+          </header>
           <div className='example'>
             <div className='view-source'>
               <a target='_blank' href={demoRoot + '/' + selected + '.js' }>
