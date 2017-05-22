@@ -25,10 +25,19 @@ class BackgroundCells extends React.Component {
     range: PropTypes.arrayOf(
       PropTypes.instanceOf(Date)
     ),
+
+    // same as range, just for disabled days
+    disabledRange: PropTypes.arrayOf(
+      PropTypes.instanceOf(Date)
+    ),
+
     rtl: PropTypes.bool,
     type: PropTypes.string,
-    // fully blocked days:   ex. [1,4,5]
-    blockedSlots: React.PropTypes.array.isRequired,
+
+  }
+
+  static defaultProps = {
+    disabledRange: [],
   }
 
   constructor(props, context) {
@@ -57,24 +66,8 @@ class BackgroundCells extends React.Component {
   }
 
   render(){
-    let { range, cellWrapperComponent: Wrapper, blockedSlots } = this.props;
+    let { range, cellWrapperComponent: Wrapper, disabledRange } = this.props;
     let { selecting, startIdx, endIdx } = this.state;
-
-    // mano kodas
-    // let children = [];
-    //
-    // for (var i = 0; i < slots; i++) {
-    //   children.push(
-    //     <Wrapper key={'bg_' + i} value={values[i]}>
-    //       <div
-    //         style={segStyle(1, slots)}
-    //         className={cn('rbc-day-bg', {
-    //           'rbc-selected-cell': selecting && i >= startIdx && i <= endIdx,
-    //           'blocked': _.includes(blockedSlots, values[i].getDay()),
-    //         })}
-    //       />
-    //     </Wrapper>
-    //   )
 
     return (
       <div className='rbc-row-bg'>
@@ -88,6 +81,7 @@ class BackgroundCells extends React.Component {
                   'rbc-day-bg',
                   selected && 'rbc-selected-cell',
                   dates.isToday(date) && 'rbc-today',
+                  disabledRange.some(enabledDate => enabledDate.getTime() === date.getTime()) && 'blocked',
                 )}
               />
             </Wrapper>
@@ -181,9 +175,5 @@ class BackgroundCells extends React.Component {
         })
   }
 }
-
-BackgroundCells.defaultProps = {
-  blockedSlots: []
-};
 
 export default BackgroundCells;
