@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import dates from './utils/dates';
 import localizer from './localizer';
@@ -5,24 +6,22 @@ import { navigate } from './utils/constants';
 
 import TimeGrid from './TimeGrid';
 
-let Week = React.createClass({
+class Week extends React.Component {
+  static propTypes = {
+    date: PropTypes.instanceOf(Date).isRequired,
+  };
 
-  propTypes: TimeGrid.propTypes,
-
-  getDefaultProps() {
-    return TimeGrid.defaultProps
-  },
+  static defaultProps = TimeGrid.defaultProps;
 
   render() {
-    let { date } = this.props
-    let { start, end } = Week.range(date, this.props)
+    let { date, ...props } = this.props
+    let range = Week.range(date, this.props)
 
     return (
-      <TimeGrid {...this.props} start={start} end={end} eventOffset={15}/>
+      <TimeGrid {...props} range={range} eventOffset={15} />
     );
   }
-
-});
+}
 
 Week.navigate = (date, action) => {
   switch (action){
@@ -42,7 +41,7 @@ Week.range = (date, { culture }) => {
   let start = dates.startOf(date, 'week', firstOfWeek)
   let end = dates.endOf(date, 'week', firstOfWeek)
 
-  return { start, end }
+  return dates.range(start, end)
 }
 
 

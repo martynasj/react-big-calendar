@@ -1,25 +1,23 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import dates from './utils/dates';
 import TimeGrid from './TimeGrid';
 import { navigate } from './utils/constants';
 
-let Day = React.createClass({
-
-  propTypes: TimeGrid.propTypes,
-
-  getDefaultProps() {
-    return TimeGrid.defaultProps
-  },
+class Day extends React.Component {
+  static propTypes = {
+    date: PropTypes.instanceOf(Date).isRequired,
+  };
 
   render() {
-    let { date } = this.props;
-    let { start, end } = Day.range(date)
+    let { date, ...props } = this.props;
+    let range = Day.range(date)
 
     return (
-      <TimeGrid {...this.props} start={start} end={end} eventOffset={10}/>
+      <TimeGrid {...props} range={range} eventOffset={10} />
     );
   }
-});
+}
 
 Day.navigate = (date, action)=>{
   switch (action){
@@ -36,8 +34,7 @@ Day.navigate = (date, action)=>{
 
 
 Day.range = (date)=> {
-  date = dates.startOf(date, 'day')
-  return { start: date, end: date }
+  return [dates.startOf(date, 'day')]
 }
 
 

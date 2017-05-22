@@ -40,6 +40,13 @@
     overflow: hidden;
   }
 
+  .rbc-blocked-hours {
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+    background-color: rgba(210,210,210, 0.5);
+  }
+
   .rbc-event-label {
     flex: none;
     padding-right: 5px;
@@ -74,7 +81,7 @@
 
 .rbc-day-slot .rbc-event {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
 }
 
 .rbc-day-slot.rbc-today {

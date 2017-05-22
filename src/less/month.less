@@ -37,6 +37,7 @@
   flex-direction: column;
   flex: 1 0 0;
   width: 100%;
+  user-select: none;
 
   height: 100%; // ie-fix
 
@@ -89,11 +90,6 @@
   }
 }
 
-.rbc-row-content {
-  position: relative;
-  z-index: 4;
-}
-
 .rbc-row-bg {
   &:extend(.rbc-abs-full);
   display: flex;
@@ -110,6 +106,10 @@
   .rbc-rtl & + & {
     border-left-width: 0;
     border-right: 1px solid @cell-border;
+  }
+
+  &.blocked {
+    background-color: rgba(210,210,210, 0.5);
   }
 }
 
