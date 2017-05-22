@@ -149,7 +149,7 @@ class Calendar extends React.Component {
     * ```
     */
    onSelecting: PropTypes.func,
-     
+
    /**
     * The selected event, if any.
     */
