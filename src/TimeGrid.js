@@ -59,6 +59,9 @@ export default class TimeGrid extends Component {
     onDrillDown: PropTypes.func,
     getDrilldownView: PropTypes.func.isRequired,
 
+    showTimeGutter: PropTypes.bool,
+    showHeader: PropTypes.bool,
+
     messages: PropTypes.object,
     components: PropTypes.object.isRequired,
   }
@@ -141,6 +144,8 @@ export default class TimeGrid extends Component {
       , width
       , startAccessor
       , endAccessor
+      , showTimeGutter
+      , showHeader
       , allDayAccessor } = this.props;
 
     width = width || this.state.gutterWidth;
@@ -178,18 +183,22 @@ export default class TimeGrid extends Component {
     return (
       <div className='rbc-time-view'>
 
-        {this.renderHeader(range, allDayEvents, width)}
+        {showHeader &&
+          this.renderHeader(range, allDayEvents, width)
+        }
 
         <div ref='content' className='rbc-time-content'>
           <div ref='timeIndicator' className='rbc-current-time-indicator' />
 
-          <TimeColumn
-            {...this.props}
-            showLabels
-            style={{ width }}
-            ref={gutterRef}
-            className='rbc-time-gutter'
-          />
+          {showTimeGutter &&
+            <TimeColumn
+              {...this.props}
+              showLabels
+              style={{ width }}
+              ref={gutterRef}
+              className='rbc-time-gutter'
+            />
+          }
 
           {this.renderEvents(range, rangeEvents, this.props.now)}
 

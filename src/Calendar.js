@@ -267,6 +267,16 @@ class Calendar extends React.Component {
    titleAccessor: accessor,
 
    /**
+    * In week and day views, will display time gutter
+    */
+   showTimeGutter: PropTypes.bool,
+
+   /**
+    * Will not render the header above timegrid and month view
+    */
+   showHeader: PropTypes.bool,
+
+   /**
     * Determines whether the event should be considered an "all day" event and ignore time.
     * Must resolve to a `boolean` value.
     *
@@ -483,7 +493,10 @@ class Calendar extends React.Component {
    titleAccessor: 'title',
    allDayAccessor: 'allDay',
    startAccessor: 'start',
-   endAccessor: 'end'
+   endAccessor: 'end',
+
+   showTimeGutter: true,
+   showHeader: true,
  };
 
  getViews = () => {

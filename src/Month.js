@@ -58,6 +58,8 @@ let propTypes = {
   onDrillDown: PropTypes.func,
   getDrilldownView: PropTypes.func.isRequired,
 
+  showHeader: PropTypes.bool,
+
   dateFormat,
 
   weekdayFormat: dateFormat,
@@ -127,7 +129,7 @@ class MonthView extends React.Component {
   }
 
   render() {
-    let { date, culture, weekdayFormat, className } = this.props,
+    let { date, culture, weekdayFormat, className, showHeader } = this.props,
       month = dates.visibleDays(date, culture),
       weeks = chunk(month, 7)
 
@@ -135,9 +137,11 @@ class MonthView extends React.Component {
 
     return (
       <div className={cn('rbc-month-view', className)}>
-        <div className="rbc-row rbc-month-header">
-          {this.renderHeaders(weeks[0], weekdayFormat, culture)}
-        </div>
+        {showHeader &&
+          <div className="rbc-row rbc-month-header">
+            {this.renderHeaders(weeks[0], weekdayFormat, culture)}
+          </div>
+        }
         {weeks.map((week, idx) => this.renderWeek(week, idx))}
         {this.props.popup && this.renderOverlay()}
       </div>
