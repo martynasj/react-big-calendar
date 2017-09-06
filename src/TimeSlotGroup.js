@@ -14,7 +14,8 @@ export default class TimeSlotGroup extends Component {
     showLabels: PropTypes.bool,
     isNow: PropTypes.bool,
     timeGutterFormat: PropTypes.string,
-    culture: PropTypes.string
+    culture: PropTypes.string,
+    slotPropGetter: PropTypes.func,
   }
   static defaultProps = {
     timeslots: 2,

@@ -19,6 +19,7 @@ export default class TimeColumn extends Component {
     timeGutterFormat: PropTypes.string,
     type: PropTypes.string.isRequired,
     className: PropTypes.string,
+    slotPropGetter: PropTypes.func,
 
     dayWrapperComponent: elementType,
   }
