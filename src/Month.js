@@ -16,6 +16,7 @@ import Popup from './Popup'
 import Overlay from 'react-overlays/lib/Overlay'
 import DateContentRow from './DateContentRow'
 import Header from './Header'
+import DateHeader from './DateHeader'
 
 import { accessor, dateFormat } from './utils/propTypes'
 import { segStyle, inRange, sortEvents } from './utils/eventLevels'
@@ -58,6 +59,8 @@ let propTypes = {
   onShowMore: PropTypes.func,
   onDrillDown: PropTypes.func,
   getDrilldownView: PropTypes.func.isRequired,
+
+  showHeader: PropTypes.bool,
 
   dateFormat,
 
@@ -161,7 +164,7 @@ class MonthView extends React.Component {
   }
 
   render() {
-    let { date, culture, weekdayFormat, className } = this.props,
+    let { date, culture, weekdayFormat, className, showHeader } = this.props,
       month = dates.visibleDays(date, culture),
       weeks = chunk(month, 7)
 
@@ -169,9 +172,11 @@ class MonthView extends React.Component {
 
     return (
       <div className={cn('rbc-month-view', className)}>
-        <div className="rbc-row rbc-month-header">
-          {this.renderHeaders(weeks[0], weekdayFormat, culture)}
-        </div>
+        {showHeader &&
+          <div className="rbc-row rbc-month-header">
+            {this.renderHeaders(weeks[0], weekdayFormat, culture)}
+          </div>
+        }
         {weeks.map((week, idx) => this.renderWeek(week, idx))}
         {this.props.popup && this.renderOverlay()}
       </div>
@@ -242,6 +247,7 @@ class MonthView extends React.Component {
     let isCurrent = dates.eq(date, currentDate, 'day')
     let drilldownView = getDrilldownView(date)
     let label = localizer.format(date, dateFormat, culture)
+    let DateHeaderComponent = this.props.components.dateHeader || DateHeader
 
     return (
       <div
@@ -252,16 +258,12 @@ class MonthView extends React.Component {
           isCurrent && 'rbc-current'
         )}
       >
-        {drilldownView
-          ? <a
-              href="#"
-              onClick={e => this.handleHeadingClick(date, drilldownView, e)}
-            >
-              {label}
-            </a>
-          : <span>
-              {label}
-            </span>}
+        <DateHeaderComponent
+          label={label}
+          date={date}
+          drilldownView={drilldownView}
+          isOffRange={isOffRange}
+          onDrillDown={e => this.handleHeadingClick(date, drilldownView, e)} />
       </div>
     )
   }

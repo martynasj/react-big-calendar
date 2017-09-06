@@ -116,14 +116,14 @@ class Calendar extends React.Component {
     * A callback fired when a date selection is made. Only fires when `selectable` is `true`.
     *
     * ```js
-    * function(
-    *   slotInfo: object {
+    * (
+    *   slotInfo: {
     *     start: Date,
     *     end: Date,
-    *     slots: array<Date>,
+    *     slots: Array<Date>,
     *     action: "select" | "click"
     *   }
-    * )
+    * ) => any
     * ```
     */
    onSelectSlot: PropTypes.func,
@@ -132,7 +132,7 @@ class Calendar extends React.Component {
     * Callback fired when a calendar event is selected.
     *
     * ```js
-    * function(event: object, e: SyntheticEvent)
+    * (event: Object, e: SyntheticEvent) => any
     * ```
     *
     * @controllable selected
@@ -145,11 +145,10 @@ class Calendar extends React.Component {
     * Returning `false` from the handler will prevent a selection.
     *
     * ```js
-    * function ({ start: Date, end: Date }) : boolean
+    * (range: { start: Date, end: Date }) => ?boolean
     * ```
     */
    onSelecting: PropTypes.func,
-
    /**
     * The selected event, if any.
     */
@@ -250,27 +249,58 @@ class Calendar extends React.Component {
     * to be applied to the the event node.
     *
     * ```js
-    * function(
-    * 	event: object,
-    * 	start: date,
-    * 	end: date,
-    * 	isSelected: bool
-    * ) -> { className: string?, style: object? }
+    * (
+    * 	event: Object,
+    * 	start: Date,
+    * 	end: Date,
+    * 	isSelected: boolean
+    * ) => { className?: string, style?: Object }
     * ```
     */
    eventPropGetter: PropTypes.func,
 
    /**
+    * Optionally provide a function that returns an object of className or style props
+    * to be applied to the the time-slot node. Caution! Styles that change layout or
+    * position may break the calendar in unexpected ways.
+    *
+    * ```js
+    * (
+    * 	date: Date,
+    * ) => { className?: string, style?: Object }
+    * ```
+    */
+   slotPropGetter: PropTypes.func,
+
+   /**
     * Accessor for the event title, used to display event information. Should
     * resolve to a `renderable` value.
+    *
+    * ```js
+    * string | (event: Object) => any
+    * ```
     *
     * @type {(func|string)}
     */
    titleAccessor: accessor,
 
    /**
+    * In week and day views, will display time gutter
+    */
+   showTimeGutter: PropTypes.bool,
+
+   /**
+    * Will not render the header above timegrid and month view
+    */
+   showHeader: PropTypes.bool,
+
+   /**
     * Determines whether the event should be considered an "all day" event and ignore time.
     * Must resolve to a `boolean` value.
+    *
+    * ```js
+    * string | (event: Object) => boolean
+    * ```
     *
     * @type {(func|string)}
     */
@@ -279,12 +309,20 @@ class Calendar extends React.Component {
    /**
     * The start date/time of the event. Must resolve to a JavaScript `Date` object.
     *
+    * ```js
+    * string | (event: Object) => Date
+    * ```
+    *
     * @type {(func|string)}
     */
    startAccessor: accessor,
 
    /**
     * The end date/time of the event. Must resolve to a JavaScript `Date` object.
+    *
+    * ```js
+    * string | (event: Object) => Date
+    * ```
     *
     * @type {(func|string)}
     */
@@ -438,6 +476,7 @@ class Calendar extends React.Component {
      }),
      month: PropTypes.shape({
        header: elementType,
+       dateHeader: elementType,
        event: elementType
      })
    }),
@@ -472,7 +511,10 @@ class Calendar extends React.Component {
    titleAccessor: 'title',
    allDayAccessor: 'allDay',
    startAccessor: 'start',
-   endAccessor: 'end'
+   endAccessor: 'end',
+
+   showTimeGutter: true,
+   showHeader: true,
  };
 
  getViews = () => {
