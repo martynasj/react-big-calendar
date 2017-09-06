@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import cn from 'classnames';
+import _ from 'lodash';
 import { findDOMNode } from 'react-dom';
 
 import dates from './utils/dates';
@@ -21,6 +22,8 @@ import { notify } from './utils/helpers';
 import { accessor as get } from './utils/accessors';
 
 import { inRange, sortEvents, segStyle } from './utils/eventLevels';
+
+window.dates = dates;
 
 export default class TimeGrid extends Component {
 
@@ -64,6 +67,8 @@ export default class TimeGrid extends Component {
 
     messages: PropTypes.object,
     components: PropTypes.object.isRequired,
+
+    enabledHours: React.PropTypes.object,
   }
 
   static defaultProps = {
@@ -208,7 +213,7 @@ export default class TimeGrid extends Component {
   }
 
   renderEvents(range, events, today){
-    let { min, max, endAccessor, startAccessor, components } = this.props;
+    let { min, max, endAccessor, startAccessor, components, enabledHours } = this.props;
 
     return range.map((date, idx) => {
       let daysEvents = events.filter(
@@ -217,11 +222,20 @@ export default class TimeGrid extends Component {
           get(event, endAccessor), 'day')
       )
 
+      let daysBlockedHours = [];
+      if (enabledHours) {
+        // this is needed to map Calendar enabledHours props
+        const mapper = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        const daysEnabledHours = enabledHours[mapper[date.getDay()]];
+        daysBlockedHours = this.calculateBlockedHours(daysEnabledHours);
+      }
+
       return (
         <DayColumn
           {...this.props }
           min={dates.merge(date, min)}
           max={dates.merge(date, max)}
+          blockedHours={daysBlockedHours}
           eventComponent={components.event}
           eventWrapperComponent={components.eventWrapper}
           dayWrapperComponent={components.dayWrapper}
@@ -234,6 +248,24 @@ export default class TimeGrid extends Component {
       )
     })
   }
+
+  /**
+   * Reverses the enabledHours array, by making a new array of the same shape, just
+   * instead of showing intervals of enabled hours, we get blocked hours
+   */
+  calculateBlockedHours = enabledHours => {
+    if (!enabledHours || enabledHours.length === 0) {
+      return [{
+        start: 0,
+        end: 1440,
+      }];
+    }
+
+    return _.map(enabledHours, (shift, index, allShifts) => ({
+      start: index === 0 ? 0 : allShifts[index - 1].end,
+      end: shift.start,
+    })).concat({ start: _.last(enabledHours).end, end: 1440 });
+  };
 
   renderHeader(range, events, width) {
     let { messages, rtl, selectable, components, now } = this.props;

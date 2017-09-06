@@ -68,6 +68,24 @@ class Calendar extends React.Component {
    date: PropTypes.instanceOf(Date),
 
    /**
+    * Shows certain dates as enabled/disabled
+    *
+    * ```js
+    * {
+    *   mon: [
+    *     { start: 450, end: 600 },
+    *     { start: 900, end: 1080 }
+    *   ],
+    *   tue: ...,
+    *   '2017-06-15': [
+    *     { start: 420, end: 800 }
+    *   ]
+    * }
+    * ```
+    */
+   enabledHours: PropTypes.object,
+
+   /**
     * The current view of the calendar.
     *
     * @default 'month'
@@ -243,7 +261,7 @@ class Calendar extends React.Component {
 
    /**
     * Optionally provide a function that returns an object of className or style props
-    * to be applied to the the time-slot node. Caution! Styles that change layout or 
+    * to be applied to the the time-slot node. Caution! Styles that change layout or
     * position may break the calendar in unexpected ways.
     *
     * ```js
@@ -536,6 +554,7 @@ class Calendar extends React.Component {
  render() {
    let {
        view, toolbar, events
+     , enabledHours
      , culture
      , components = {}
      , formats = {}
@@ -585,6 +604,7 @@ class Calendar extends React.Component {
          ref='view'
          {...props}
          {...formats}
+         enabledHours={enabledHours}
          culture={culture}
          formats={undefined}
          events={events}

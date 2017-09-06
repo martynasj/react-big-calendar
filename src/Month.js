@@ -28,6 +28,8 @@ let propTypes = {
   events: PropTypes.array.isRequired,
   date: PropTypes.instanceOf(Date),
 
+  enabledHours: PropTypes.object,
+
   min: PropTypes.instanceOf(Date),
   max: PropTypes.instanceOf(Date),
 
@@ -128,6 +130,39 @@ class MonthView extends React.Component {
     return findDOMNode(this)
   }
 
+  getWeekdayKey = (weekdayNumber) => {
+    // not sure if this works with all locales
+    const weekdays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    return weekdays[weekdayNumber];
+  }
+
+  /**
+   * Given enabledHours object calculate an array of disabled dates
+   */
+  getDisabledRange = (week) => {
+    const { enabledHours } = this.props;
+    return week.filter(date => {
+      const weekdayKey = this.getWeekdayKey(date.getDay());
+
+      // if it doesn't exist, the day is disabled
+      if (!enabledHours.hasOwnProperty(weekdayKey)) {
+        return true;
+      }
+
+      // if e.g. { mon: false }
+      if (typeof enabledHours[weekdayKey] === 'boolean' && !enabledHours[weekdayKey]) {
+        return true;
+      }
+
+      // if there is 0 shifts that day, e.g. { mon: [] }
+      if (Array.isArray(enabledHours[weekdayKey]) && enabledHours[weekdayKey].length === 0) {
+        return true;
+      }
+
+      return false;
+    })
+  }
+
   render() {
     let { date, culture, weekdayFormat, className, showHeader } = this.props,
       month = dates.visibleDays(date, culture),
@@ -153,6 +188,7 @@ class MonthView extends React.Component {
       events,
       components,
       selectable,
+      enabledHours,
       titleAccessor,
       startAccessor,
       endAccessor,
@@ -176,6 +212,7 @@ class MonthView extends React.Component {
         className="rbc-month-row"
         now={now}
         range={week}
+        disabledRange={enabledHours && this.getDisabledRange(week)}
         events={events}
         maxRows={rowLimit}
         selected={selected}

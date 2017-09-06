@@ -30,7 +30,7 @@ class Dnd extends React.Component {
 
     this.setState({
       events: nextEvents
-    })
+    });
 
     alert(`${event.title} was dropped onto ${event.start}`);
   }

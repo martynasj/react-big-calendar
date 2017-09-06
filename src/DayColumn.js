@@ -39,6 +39,12 @@ class DaySlot extends React.Component {
     startAccessor: accessor.isRequired,
     endAccessor: accessor.isRequired,
 
+    /**
+     * Blocked hours for this day
+     * [{ start: 0, end: 900 }, { start: 1080, end: 1440 }]
+     */
+    blockedHours: React.PropTypes.array,
+
     selectRangeFormat: dateFormat,
     eventTimeRangeFormat: dateFormat,
     culture: PropTypes.string,
@@ -112,6 +118,7 @@ class DaySlot extends React.Component {
         step={step}
       >
         {this.renderEvents()}
+        {this.renderBlockedHours()}
 
         {selecting &&
           <div className='rbc-slot-selection' style={style}>
@@ -121,6 +128,18 @@ class DaySlot extends React.Component {
           </div>
         }
       </TimeColumn>
+    );
+  }
+
+  renderBlockedHours = () => {
+    const { blockedHours } = this.props;
+
+    return blockedHours.map((block, index) =>
+      <div
+        key={index}
+        style={this._blockedSlotStyle(block.start, block.end)}
+        className={'rbc-blocked-hours'}
+      />
     );
   }
 
@@ -189,6 +208,20 @@ class DaySlot extends React.Component {
       )
     })
   };
+
+  /**
+   * @param start   - minutes from 00:00, ex. 420
+   * @param end     - minutes from 00:00, ex 960
+   */
+  _blockedSlotStyle = (start, end) => {
+    let top = ((start / this._totalMin) * 100);
+    let bottom = ((end / this._totalMin) * 100);
+
+    return {
+      top: top + '%',
+      height: bottom - top + '%',
+    };
+  }
 
   _slotStyle = (startSlot, endSlot) => {
     let top = ((startSlot / this._totalMin) * 100);

@@ -20,13 +20,14 @@ import Rendering from './demos/rendering';
 import CustomView from './demos/customView';
 import Timeslots from './demos/timeslots';
 import Dnd from './demos/dnd';
+import EnabledHours from './demos/enabledHours';
 
 let demoRoot = 'https://github.com/intljusticemission/react-big-calendar/tree/master/examples/demos'
 
 const Example = React.createClass({
   getInitialState(){
     return {
-      selected: 'basic',
+      selected: 'enabledHours',
     };
   },
 
@@ -41,6 +42,7 @@ const Example = React.createClass({
       customView: CustomView,
       timeslots: Timeslots,
       dnd: Dnd,
+      enabledHours: EnabledHours,
     }[selected];
 
     return (
@@ -92,6 +94,9 @@ const Example = React.createClass({
               */}
               <li className={cn({active: selected === 'dnd' })}>
                 <a href='#' onClick={this.select.bind(null, 'dnd')}>Drag and Drop</a>
+              </li>
+              <li className={cn({active: selected === 'enabledHours' })}>
+                <a href='#' onClick={this.select.bind(null, 'enabledHours')}>Enabled hours</a>
               </li>
             </ul>
           </header>

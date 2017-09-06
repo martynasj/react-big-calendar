@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import cn from 'classnames';
+import _ from 'lodash';
 
 import dates from './utils/dates';
 import { segStyle } from './utils/eventLevels';
@@ -24,8 +25,19 @@ class BackgroundCells extends React.Component {
     range: PropTypes.arrayOf(
       PropTypes.instanceOf(Date)
     ),
+
+    // same as range, just for disabled days
+    disabledRange: PropTypes.arrayOf(
+      PropTypes.instanceOf(Date)
+    ),
+
     rtl: PropTypes.bool,
     type: PropTypes.string,
+
+  }
+
+  static defaultProps = {
+    disabledRange: [],
   }
 
   constructor(props, context) {
@@ -54,7 +66,7 @@ class BackgroundCells extends React.Component {
   }
 
   render(){
-    let { range, cellWrapperComponent: Wrapper } = this.props;
+    let { range, cellWrapperComponent: Wrapper, disabledRange } = this.props;
     let { selecting, startIdx, endIdx } = this.state;
 
     return (
@@ -73,6 +85,7 @@ class BackgroundCells extends React.Component {
                   'rbc-day-bg',
                   selected && 'rbc-selected-cell',
                   dates.isToday(date) && 'rbc-today',
+                  disabledRange.some(enabledDate => enabledDate.getTime() === date.getTime()) && 'blocked',
                 )}
               />
             </Wrapper>

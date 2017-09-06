@@ -18,6 +18,8 @@ const propTypes = {
   events: PropTypes.array.isRequired,
   range: PropTypes.array.isRequired,
 
+  disabledRange: PropTypes.array,
+
   rtl: PropTypes.bool,
   renderForMeasure: PropTypes.bool,
   renderHeader: PropTypes.func,
@@ -150,6 +152,7 @@ class DateContentRow extends React.Component {
       eventWrapperComponent,
       onSelectStart,
       onSelectEnd,
+      disabledRange,
       ...props
     } = this.props;
 
@@ -171,6 +174,7 @@ class DateContentRow extends React.Component {
         <BackgroundCells
           rtl={rtl}
           range={range}
+          disabledRange={disabledRange}
           selectable={selectable}
           container={this.getContainer}
           onSelectStart={onSelectStart}
