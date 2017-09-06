@@ -268,7 +268,7 @@ export default class TimeGrid extends Component {
   };
 
   renderHeader(range, events, width) {
-    let { messages, rtl, selectable, components, now } = this.props;
+    let { messages, rtl, selectable, components, now, showTimeGutter } = this.props;
     let { isOverflowing } = this.state || {};
 
     let style = {};
@@ -285,20 +285,24 @@ export default class TimeGrid extends Component {
         style={style}
       >
         <div className='rbc-row'>
-          <div
-            className='rbc-label rbc-header-gutter'
-            style={{ width }}
-          />
+          {showTimeGutter &&
+            <div
+              className='rbc-label rbc-header-gutter'
+              style={{ width }}
+            />
+          }
           { this.renderHeaderCells(range) }
         </div>
         <div className='rbc-row'>
-          <div
-            ref={ref => this._gutters[0] = ref}
-            className='rbc-label rbc-header-gutter'
-            style={{ width }}
-          >
-            { message(messages).allDay }
-          </div>
+          {showTimeGutter &&
+            <div
+              ref={ref => this._gutters[0] = ref}
+              className='rbc-label rbc-header-gutter'
+              style={{ width }}
+            >
+              {message(messages).allDay}
+            </div>
+          }
           <DateContentRow
             now={now}
             minRows={2}
@@ -442,14 +446,15 @@ export default class TimeGrid extends Component {
     const timeIndicator = this.refs.timeIndicator;
     const factor = secondsPassed / secondsGrid;
     const timeGutter = this._gutters[this._gutters.length - 1];
+    const timeContent = this.refs.content;
 
-    if (timeGutter && now >= min && now <= max) {
-      const pixelHeight = timeGutter.offsetHeight;
+    if (now >= min && now <= max) {
+      const pixelHeight = timeContent.offsetHeight;
       const offset = Math.floor(factor * pixelHeight);
 
       timeIndicator.style.display = 'block';
       timeIndicator.style[rtl ? 'left' : 'right'] = 0;
-      timeIndicator.style[rtl ? 'right' : 'left'] = timeGutter.offsetWidth + 'px';
+      timeIndicator.style[rtl ? 'right' : 'left'] = timeGutter ? timeGutter.offsetWidth + 'px' : 0;
       timeIndicator.style.top = offset + 'px';
     } else {
       timeIndicator.style.display = 'none';
